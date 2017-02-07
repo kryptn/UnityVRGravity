@@ -11,6 +11,18 @@ public class ObjectFactory : MonoBehaviour
         return Instantiate(prefab, pos, rot);
     }
 
+    public static GameObject CreateSizeDefinedObject(GameObject prefab, Vector3 pos, Quaternion rot, float radius)
+    {
+        var mass = (4f / 3f) * Mathf.PI * Mathf.Pow(radius, 3) * 100;
+        var go = CreateGameObject(prefab, pos, rot);
+        go.GetComponent<ParticleController>().Initialize(true);
+        go.transform.localScale = new Vector3(radius, radius, radius);
+        go.tag = "GravitationalBody";
+        go.GetComponent<SphereCollider>().enabled = true;
+        go.GetComponent<Rigidbody>().useGravity = false;
+        go.GetComponent<Rigidbody>().mass = mass;
+        return go;
+    }
 
 
 
@@ -22,15 +34,7 @@ public class ObjectFactory : MonoBehaviour
         p.GetComponent<SphereCollider>().enabled = true;
         return p;
     }
-
-    public static GameObject CreateTrail(GameObject source, Vector3 pos)
-    {
-        var trail = Instantiate(source, pos, Quaternion.identity);
-        
-        trail.GetComponent<Rigidbody>().useGravity = false;
-        return trail;
-    }
-
+    
     public static GameObject CreateSatellite(GameObject source, Vector3 pos, GameObject parent, float scale, float speed)
     {
         // 

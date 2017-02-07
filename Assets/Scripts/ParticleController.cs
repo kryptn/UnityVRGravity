@@ -15,6 +15,7 @@ public class ParticleController : MonoBehaviour
 
     public int Lifetime;
     public float GravConstant;
+    private bool FreeFloat = false;
     private GameObject AttractedTo;
     private DateTime deathTime;
 
@@ -32,11 +33,11 @@ public class ParticleController : MonoBehaviour
 	// Update is called once per frame
 	void FixedUpdate ()
 	{
-        if (AttractedTo == null) return;
+        if (AttractedTo == null && !FreeFloat) return;
         
-	    var Bodies = GameObject.FindGameObjectsWithTag("GravitationalBody").Where(body => body != gameObject);
+	    var bodies = GameObject.FindGameObjectsWithTag("GravitationalBody").Where(body => body != gameObject);
 	    var close = 0;
-	    var forces = Bodies.Select(body =>
+	    var forces = bodies.Select(body =>
 	    {
             var dist = Vector3.Distance(transform.position, body.transform.position);
 	        if (dist < 2)
@@ -47,17 +48,7 @@ public class ParticleController : MonoBehaviour
 	    });
 	    self.AddForce(forces.Aggregate(new Vector3(), (current, f) => current + f));
 
-
-	    if (close <= 2)
-            GetComponent<Renderer>().material = Dark;
-        else if(close <= 6)
-            GetComponent<Renderer>().material = Cool;
-        else if (close <= 12)
-            GetComponent<Renderer>().material = Warm;
-        else
-            GetComponent<Renderer>().material = Hot;
-
-
+       
     }
 
     void Update()
@@ -87,5 +78,10 @@ public class ParticleController : MonoBehaviour
     public void Initialize(GameObject attractedTo)
     {
         AttractedTo = attractedTo;
+    }
+
+    public void Initialize(bool freeFloat)
+    {
+        FreeFloat = freeFloat;
     }
 }
